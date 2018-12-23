@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .main.container
+    .row
+        .col-md-6.col-md-offset-3
+            h1.display-4.m-b-2 Ajouter une station
+  
+            form(method="POST", action='/api/stations')
+                div.form-group
+                    label(for='name') Nom de la station:
+                    input#name.form-control(type='text',placeholder='Première Station' name='name')
+                div.form-group
+                    label(for='adresseIp') Adresse IP:
+                    input#adresseIp.form-control(type='text',placeholder='ex: 192.168.7.6' name='ipAdress')
+                div.form-group    
+                    label(for='latitude') Latitude:
+                    input#latitude.form-control(type='number',min=0, placeholder=0, name='latitude')
+                    div.form-group    
+                    label(for='longitude') Longitude:
+                    input#longitude.form-control(type='number',min=0,placeholder=0, name='longitude')
+                div.form-group    
+                    label(for='frequency') Frequence:
+                    input#frequency.form-control(type='number',min=1,placeholder=0, name='frequency')
+                button.btn.btn-primary(type='submit') Enregistrer
