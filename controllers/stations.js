@@ -5,6 +5,7 @@
  */
 var Request = require('request');
 const {validationResult} = require('express-validator/check');
+const Config=require('../config/configs');
 
 module.exports = {
     create(req, res) {
@@ -15,7 +16,7 @@ module.exports = {
         }
         Request.post({
             "headers": {"content-type": "application/json"},
-            "url": "http://localhost:3000/api/stations",
+            "url": Config.DATASTORAGE_URI+"stations",
             "body": JSON.stringify({
                 "name": req.body.name,
                 "frequency": req.body.frequency,
@@ -27,16 +28,16 @@ module.exports = {
             if (error) {
                 return res.status(response.statusCode).json({errors: errors.array()});
             }
-            return res.json(body);
+            return res.json(JSON.parse(body));
         });
     },
     list(req, res) {
 
-        Request.get("http://localhost:3000/api/stations", (error, response, body) => {
+        Request.get(Config.DATASTORAGE_URI+"stations", (error, response, body) => {
             if (error) {
-                return res.status(response.statusCode).json({errors: errors.array()});
+                return res.status(response.statusCode).json({error: error.array()});
             }
-            return res.json(body);
+            return res.json(JSON.parse(body));
         });
 
     },
@@ -49,7 +50,7 @@ module.exports = {
         Request({
             'method': "PUT",
             "content-type": "application/json",
-            "url": "http://localhost:3000/api/stations/" + req.params.stationId,
+            "url": Config.DATASTORAGE_URI+"stations/" + req.params.stationId,
             "body": JSON.stringify({
                 "name": req.body.name,
                 "frequency": req.body.frequency,
@@ -59,9 +60,9 @@ module.exports = {
             })
         }, (error, response, body) => {
             if (error) {
-                return res.status(response.statusCode).json({errors: errors.array()});
+                return res.status(response.statusCode).json({error: error.array()});
             }
-            return res.json(body);
+            return res.json(JSON.parse(body));
         });
     },
     retrieve(req, res) {
@@ -70,11 +71,11 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
-        Request.get("http://localhost:3000/api/stations/"+req.params.stationId, (error, response, body) => {
+        Request.get(Config.DATASTORAGE_URI+"stations/"+req.params.stationId, (error, response, body) => {
             if (error) {
-                return res.status(response.statusCode).json({errors: errors.array()});
+                return res.status(response.statusCode).json({error: error.array()});
             }
-            return res.json(body);
+            return res.json(JSON.parse(body));
         });
     },
     destroy(req,res){
@@ -83,11 +84,11 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
-        Request.delete("http://localhost:3000/api/stations/"+req.params.stationId,(error,response,body)=>{
+        Request.delete(Config.DATASTORAGE_URI+"stations/"+req.params.stationId,(error,response,body)=>{
             if(error){
-                return res.status(response.statusCode).json({errors: errors.array()});
+                return res.status(response.statusCode).json({error: error.array()});
             }
-            return res.json(body);
+            return res.json(JSON.parse(body));
         });
     }
 };

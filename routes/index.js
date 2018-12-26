@@ -16,12 +16,12 @@ router.get("/stations/:stationId",validator.validate('retrieveStation'),stations
 router.delete('/stations/:stationId',validator.validate('retrieveStation'),stationsController.destroy);
 
 router.post("/sensors/:stationId",validator.validate('createSensor'),sensorsController.create);
-router.get("/sensors",stationsController.list);
+router.get("/sensors",sensorsController.list);
 router.put("/sensors/:sensorId",validator.validate('retrieveSensor'), sensorsController.update);
-router.get("/sensors/:sensorId",validator.validate('retrieveSensor'),sensorsController.retrieve);
-
-
-//router.delete('/stations/:sensorId',validator.validate('retrieveStation'),stationsController.destroy);
+router.get("/sensors/retrieve/:sensorId",validator.validate('retrieveSensor'),sensorsController.retrieve);
+router.put("/sensors/changeState/:sensorId",validator.validate('changeSensorByState'),sensorsController.modifySensorByState);
+router.put("/sensors/changePort/:sensorId",validator.validate('changeSensorByPort'),sensorsController.modifySensorByPort);
+router.get('/sensors/:state',validator.validate('listSensorByState'), sensorsController.listSensorByState);
 
 
 module.exports = router;
