@@ -59,7 +59,7 @@ module.exports = {
             return res.status(422).json({errors: errors.array()});
         }
         Request.put({
-            "content-type": "application/json",
+            "headers": {"content-type": "application/json"},
             "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
             "body": JSON.stringify({
                 "state": req.body.state,
@@ -95,7 +95,7 @@ module.exports = {
         }
         Request({
             'method': "PUT",
-            "content-type": "application/json",
+            "headers": {"content-type": "application/json"},
             "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
             "body": JSON.stringify({
                 "state": req.body.state,
@@ -115,7 +115,7 @@ module.exports = {
         }
         Request({
             'method': "PUT",
-            "content-type": "application/json",
+            "headers": {"content-type": "application/json"},
             "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
             "body": JSON.stringify({
                 "port": req.body.port,
