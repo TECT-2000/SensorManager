@@ -74,8 +74,8 @@ module.exports={
             {
                 return [
                     body('name', "name doesn't exist ").exists(),
-                    body('longitude', "add attribute longitude ").exists(),
-                    body('latitude', "add attribute latitude").exists(),
+                    //body('longitude', "add attribute longitude ").exists(),
+                    //body('latitude', "add attribute latitude").exists(),
                     body('frequency', "frequency doesn't exist").exists(),
                     //body('position', "position doesn't exist").exists(),
                     body('ipAdress', "ipAdress doesn't exist").exists(),
