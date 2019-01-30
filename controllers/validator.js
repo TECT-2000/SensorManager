@@ -59,6 +59,7 @@ module.exports={
                 return [
                     body('state', 'need to be in enabled or disabled or broken').optional().isIn(['enabled', 'disabled', 'broken']),
                     body('state','add property state').exists(),
+                    body('type', "add type property").exists(),
                     param('sensorId', "sensorId need to be an integer").isInt(),
                 ]
             }
@@ -66,6 +67,7 @@ module.exports={
             {
                 return [
                     body('port','add property port').exists(),
+                    body('type', "add type property").exists(),
                     param('sensorId', "sensorId need to be an integer").isInt(),
                 ]
             }

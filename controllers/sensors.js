@@ -108,21 +108,7 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
-        Request.post({
-            "url": Config.DATA_ACQUISITION_URI + "config",
-            "json": {
-                id : req.params.stationId,
-                addSensor: [
-                    {
-                        type: req.body.type,
-                        port: req.body.port
-                    }
-                ]
-            }
-        }, (e, r, b) => {
-            if (b === '0') {
-                return res.send("An error occured during the creation of the sensor");
-            }
+        if(req.body.state === 'enabled'){
             Request({
                 'method': "PUT",
                 "headers": {"content-type": "application/json"},
@@ -132,11 +118,83 @@ module.exports = {
                 })
             }, (error, response, body) => {
                 if (error) {
-                    return res.status(response.statusCode).json({error: error.array()});
+                    return res.send("An error occured during the activation of the sensor");
+                }
+                let bod = JSON.parse(body);
+                Request.post({
+                    "url": Config.DATA_ACQUISITION_URI + "config",
+                    "json": {
+                        id : bod.stationID,
+                        enableSensor: [req.body.type]
+                    }
+                }, (e, r, b) => {
+                    if (b === '0') {
+                        Request({
+                            'method': "PUT",
+                            "headers": {"content-type": "application/json"},
+                            "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
+                            "body": JSON.stringify({
+                                "state": 'disabled',
+                            })
+                        }, (a,b,c) => {
+                            return res.send("An error occured during the activation of the sensor");
+                        });
+                    }
+                    return res.send("The activation finished successfully");
+                });
+            });
+        }
+        else if(req.body.state === 'disabled'){
+            Request({
+                'method': "PUT",
+                "headers": {"content-type": "application/json"},
+                "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
+                "body": JSON.stringify({
+                    "state": req.body.state,
+                })
+            }, (error, response, body) => {
+                if (error) {
+                    return res.send("An error occured during the disactivation of the sensor");
+                }
+                let bod = JSON.parse(body);
+                Request.post({
+                    "url": Config.DATA_ACQUISITION_URI + "config",
+                    "json": {
+                        id : bod.stationID,
+                        enableSensor: [req.body.type]
+                    }
+                }, (e, r, b) => {
+                    if (b === '0') {
+                        Request({
+                            'method': "PUT",
+                            "headers": {"content-type": "application/json"},
+                            "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
+                            "body": JSON.stringify({
+                                "state": 'enabled',
+                            })
+                        }, (a,b,c) => {
+                            return res.send("An error occured during the disactivation of the sensor");
+                        });
+                    }
+                    return res.send("The disactivation finished successfully");
+                });
+            });
+        }
+        else{
+            Request({
+                'method': "PUT",
+                "headers": {"content-type": "application/json"},
+                "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
+                "body": JSON.stringify({
+                    "state": req.body.state,
+                })
+            }, (error, response, body) => {
+                if (error) {
+                    return res.send("An error occured during the action");
                 }
                 return res.json(JSON.parse(body));
             });
-        });
+        }
     },
     modifySensorByPort(req,res){
         const errors = validationResult(req); // to get the result of above validate fn
