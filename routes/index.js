@@ -11,9 +11,9 @@ router.get('/', function(req, res, next) {
 
 router.post("/stations",validator.validate('createStation'),stationsController.create);
 router.get("/stations",stationsController.list);
-router.put("/stations/:stationId",validator.validate('retrieveStation'), stationsController.update);
-router.get("/stations/:stationId",validator.validate('retrieveStation'),stationsController.retrieve);
-router.delete('/stations/:stationId',validator.validate('retrieveStation'),stationsController.destroy);
+router.put("/stations/:ipAdress",validator.validate('retrieveStation'), stationsController.update);
+router.get("/stations/:ipAdress",validator.validate('retrieveStation'),stationsController.retrieve);
+router.delete('/stations/:ipAdress',validator.validate('retrieveStation'),stationsController.destroy);
 
 router.post("/sensors/:stationId",validator.validate('createSensor'),sensorsController.create);
 router.get("/sensors",sensorsController.list);

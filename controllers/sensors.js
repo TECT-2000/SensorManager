@@ -33,7 +33,7 @@ module.exports = {
                 "headers": {"content-type": "application/json"},
                 "url": Config.DATASTORAGE_URI+"stations/"+req.params.stationId+"/sensors",
                 "body": JSON.stringify({
-                    "name": req.body.name,
+                    "name": "Sensor",
                     "state": req.body.state,
                     'port': req.body.port,
                     "type": [req.body.type],
@@ -78,7 +78,7 @@ module.exports = {
             "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
             "body": JSON.stringify({
                 "state": req.body.state,
-                "name": req.body.name,
+                "name": "Sensor",
                 'type': req.body.type,
                 "port": req.body.port,
             })

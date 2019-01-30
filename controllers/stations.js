@@ -21,15 +21,15 @@ module.exports = {
             "headers": {"content-type": "application/json"},
             "url": Config.DATASTORAGE_URI + "stations",
             "body": JSON.stringify({
-                "name": req.body.name,
+                "name": "Station",
                 "frequency": req.body.frequency,
                 'ipAdress': req.body.ipAdress,
-                "longitude": req.body.longitude,
-                "latitude": req.body.latitude
+                "longitude": "0.0",
+                "latitude": "0.0"
             })
         }, (error, response, body) => {
             if (error) {
-                return res.status(response.statusCode).json({errors: errors.array()});
+                return res.send("An error occured when creating the station");
             }
             let bod = JSON.parse(body);
             Request.post({
@@ -45,15 +45,27 @@ module.exports = {
                         return res.send("An error occured during the creation of the station");
                     });
                 }
+                let final = JSON.parse(b);
+                Request.put({
+                    "headers": {"content-type": "application/json"},
+                    "url": Config.DATASTORAGE_URI + "stations/" + bod.id,
+                    "body": JSON.stringify({
+                        /*"name": "Station",
+                        "frequency": req.body.frequency,
+                        'ipAdress': req.body.ipAdress,*/
+                        "longitude": final.longitude,
+                        "latitude": final.latitude
+                    })
+                });
                 return res.send(JSON.parse(b));
             });
         });
     },
     list(req, res) {
-
+        console.log("Requesting the list of stations");
         Request.get(Config.DATASTORAGE_URI + "stations", (error, response, body) => {
             if (error) {
-                return res.status(response.statusCode).json({error: error.array()});
+                return res.send("It seems there is an error in the server");
             }
             return res.json(JSON.parse(body));
         });
@@ -72,7 +84,7 @@ module.exports = {
             "content-type": "application/json",
             "url": Config.DATASTORAGE_URI + "stations/" + req.params.stationId,
             "body": JSON.stringify({
-                "name": req.body.name,
+                "name": "Station",
                 "frequency": req.body.frequency,
                 'ipAdress': req.body.ipAdress,
                 "longitude": req.body.longitude,

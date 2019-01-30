@@ -18,7 +18,7 @@ module.exports={
             case 'createSensor':
             {
                 return [
-                    body('name', "add name property ").exists(),
+                    //body('name', "add name property ").exists(),
                     body('type', "add type property").exists(),
                     body('port', "add port property").exists().isInt(),
                     param('stationId', "stationId need to be an integer").isInt(),
@@ -74,7 +74,7 @@ module.exports={
             case 'createStation':
             {
                 return [
-                    body('name', "name doesn't exist ").exists(),
+                    //body('name', "name doesn't exist ").exists(),
                     //body('longitude', "add attribute longitude ").exists(),
                     //body('latitude', "add attribute latitude").exists(),
                     body('frequency', "frequency doesn't exist").exists(),
@@ -87,7 +87,8 @@ module.exports={
             case 'retrieveStation':
             {
                 return [
-                    param('stationId', "stationId need to be an integer").isInt(),
+                    //param('stationId', "stationId need to be an integer").isInt(),
+                    param('ipAdress','ipAdress is not valid').isIP()
                 ]
             }
         }
