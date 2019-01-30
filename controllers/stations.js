@@ -9,6 +9,9 @@ const Config = require('../config/configs');
 
 module.exports = {
     create(req, res) {
+        /**
+         * Cette méthode est appelée par Station Manager pour créer une nouvelle Station
+         */
         const errors = validationResult(req); // to get the result of above validate fn
         if (!errors.isEmpty()) {
             console.log(errors);
@@ -28,18 +31,23 @@ module.exports = {
             if (error) {
                 return res.status(response.statusCode).json({errors: errors.array()});
             }
-            body = JSON.parse(body);
+            let bod = JSON.parse(body);
             Request.post({
-                "url": Config.DATA_ACQUISITION_URI + "",
-                "body": JSON.stringify({
-                    "id": body.id,
-                    "ip": body.ipAdress,
-                    "freq": body.frequency
-                })
-            })
-            return res.json(body);
+                "url": Config.DATA_ACQUISITION_URI + "init",
+                "json": {
+                    id: bod.id,
+                    ip: bod.ipAdress,
+                    freq: bod.frequency
+                },
+            }, (e, r, b) => {
+                if (b === '0') {
+                    Request.delete(Config.DATASTORAGE_URI + "stations/"+body.id, (a,b,c)=>{
+                        return res.send("An error occured during the creation of the station");
+                    });
+                }
+                return res.send(JSON.parse(b));
+            });
         });
-
     },
     list(req, res) {
 

@@ -6,6 +6,6 @@
 
 module.exports={
     DATASTORAGE_URI : 'http://localhost:3000/api/',
-    DATA_ACQUISITION_URI : "" 
-}
+    DATA_ACQUISITION_URI : "http://192.168.8.100:5000/"
+};
 
