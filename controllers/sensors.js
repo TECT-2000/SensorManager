@@ -15,20 +15,36 @@ module.exports = {
             return res.status(422).json({errors: errors.array()});
         }
         Request.post({
-            "headers": {"content-type": "application/json"},
-            "url": Config.DATASTORAGE_URI+"stations/"+req.params.stationId+"/sensors",
-            "body": JSON.stringify({
-                "name": req.body.name,
-                "state": req.body.state,
-                'port': req.body.port,
-                "type": req.body.type,
-                "StationID": req.params.stationId
-            })
-        }, (error, response, body) => {
-            if (error) {
-                return res.status(response.statusCode).json({error: error.array()});
+            "url": Config.DATA_ACQUISITION_URI + "config",
+            "json": {
+                id : req.params.stationId,
+                addSensor: [
+                    {
+                        type: req.body.type,
+                        port: req.body.port
+                    }
+                ]
             }
-            return res.json(JSON.parse(body));
+        }, (e, r, b) => {
+            if (b === '0') {
+                return res.send("An error occured during the creation of the sensor");
+            }
+            Request.post({
+                "headers": {"content-type": "application/json"},
+                "url": Config.DATASTORAGE_URI+"stations/"+req.params.stationId+"/sensors",
+                "body": JSON.stringify({
+                    "name": req.body.name,
+                    "state": req.body.state,
+                    'port': req.body.port,
+                    "type": [req.body.type],
+                    "StationID": req.params.stationId
+                })
+            }, (error, response, body) => {
+                if (error) {
+                    return res.status(response.statusCode).json({error: error.array()});
+                }
+                return res.json(JSON.parse(body));
+            });
         });
     },
     list(req, res) {
@@ -92,18 +108,34 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
-        Request({
-            'method': "PUT",
-            "headers": {"content-type": "application/json"},
-            "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
-            "body": JSON.stringify({
-                "state": req.body.state,
-            })
-        }, (error, response, body) => {
-            if (error) {
-                return res.status(response.statusCode).json({error: error.array()});
+        Request.post({
+            "url": Config.DATA_ACQUISITION_URI + "config",
+            "json": {
+                id : req.params.stationId,
+                addSensor: [
+                    {
+                        type: req.body.type,
+                        port: req.body.port
+                    }
+                ]
             }
-            return res.json(JSON.parse(body));
+        }, (e, r, b) => {
+            if (b === '0') {
+                return res.send("An error occured during the creation of the sensor");
+            }
+            Request({
+                'method': "PUT",
+                "headers": {"content-type": "application/json"},
+                "url": Config.DATASTORAGE_URI+"sensors/" + req.params.sensorId,
+                "body": JSON.stringify({
+                    "state": req.body.state,
+                })
+            }, (error, response, body) => {
+                if (error) {
+                    return res.status(response.statusCode).json({error: error.array()});
+                }
+                return res.json(JSON.parse(body));
+            });
         });
     },
     modifySensorByPort(req,res){

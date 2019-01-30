@@ -20,10 +20,9 @@ module.exports={
                 return [
                     body('name', "add name property ").exists(),
                     body('type', "add type property").exists(),
-                    //body('type', "need to be an array like {'humidité'}").isArray(),
+                    body('port', "add port property").exists().isInt(),
                     param('stationId', "stationId need to be an integer").isInt(),
                     body('state', 'need to be in enabled or disabled or broken').optional().isIn(['enabled', 'disabled', 'broken']),
-                    
                 ]
             }
             case 'retrieveSensor':
