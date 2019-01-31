@@ -24,8 +24,8 @@ module.exports = {
                 "name": "Station",
                 "frequency": req.body.frequency,
                 'ipAdress': req.body.ipAdress,
-                "longitude": "0.0",
-                "latitude": "0.0"
+                "longitude": 0.0,
+                "latitude": 0.0
             })
         }, (error, response, body) => {
             if (error) {
@@ -41,7 +41,7 @@ module.exports = {
                 },
             }, (e, r, b) => {
                 if (b === '0') {
-                    Request.delete(Config.DATASTORAGE_URI + "stations/"+body.id, (a,b,c)=>{
+                    Request.delete(Config.DATASTORAGE_URI + "stations/" + body.id, (a, b, c) => {
                         return res.send("An error occured during the creation of the station");
                     });
                 }
@@ -51,8 +51,8 @@ module.exports = {
                     "url": Config.DATASTORAGE_URI + "stations/" + bod.id,
                     "body": JSON.stringify({
                         /*"name": "Station",
-                        "frequency": req.body.frequency,
-                        'ipAdress': req.body.ipAdress,*/
+                         "frequency": req.body.frequency,
+                         'ipAdress': req.body.ipAdress,*/
                         "longitude": final.longitude,
                         "latitude": final.latitude
                     })
@@ -65,7 +65,7 @@ module.exports = {
         console.log("Requesting the list of stations");
         Request.get(Config.DATASTORAGE_URI + "stations", (error, response, body) => {
             if (error) {
-                return res.send("It seems there is an error in the server");
+                return res.send("It seems there is an error on the server");
             }
             return res.json(JSON.parse(body));
         });
@@ -78,23 +78,35 @@ module.exports = {
             return res.status(422).json({errors: errors.array()});
         }
         //envoi d'abord à DATA ACQUISITION
-        //puis stocke la reponse
-        Request({
-            'method': "PUT",
-            "content-type": "application/json",
-            "url": Config.DATASTORAGE_URI + "stations/" + req.params.stationId,
-            "body": JSON.stringify({
-                "name": "Station",
-                "frequency": req.body.frequency,
-                'ipAdress': req.body.ipAdress,
-                "longitude": req.body.longitude,
-                "latitude": req.body.latitude
-            })
-        }, (error, response, body) => {
+        Request.get(Config.DATASTORAGE_URI + "stations/" + req.params.ipAdress, (error, response, body) => {
             if (error) {
                 return res.status(response.statusCode).json({error: error.array()});
             }
-            return res.json(JSON.parse(body));
+            //return res.json(JSON.parse(body));
+            var response = JSON.parse(body);
+            var id = response.id;
+
+            //puis stocke la reponse
+            if (id) {
+                Request({
+                    'method': "PUT",
+                    "content-type": "application/json",
+                    "url": Config.DATASTORAGE_URI + "stations/" + id,
+                    "body": JSON.stringify({
+                        "name": "Station",
+                        "frequency": req.body.frequency || '',
+                        'ipAdress': req.body.ipAdress || '',
+                        "longitude": req.body.longitude || '',
+                        "latitude": req.body.latitude || ''
+                    })
+                }, (error, response, body) => {
+                    if (error) {
+                        return res.status(response.statusCode).json({error: error.array()});
+                    }
+                    return res.json(JSON.parse(body));
+                });
+
+            }
         });
     },
     retrieve(req, res) {
@@ -103,7 +115,7 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
-        Request.get(Config.DATASTORAGE_URI + "stations/" + req.params.stationId, (error, response, body) => {
+        Request.get(Config.DATASTORAGE_URI + "stations/" + req.params.ipAdress, (error, response, body) => {
             if (error) {
                 return res.status(response.statusCode).json({error: error.array()});
             }
@@ -117,13 +129,23 @@ module.exports = {
             return res.status(422).json({errors: errors.array()});
         }
         //envoi d'abord à DATA ACQUISITION
-        //puis détruit la station
-        Request.delete(Config.DATASTORAGE_URI + "stations/" + req.params.stationId, (error, response, body) => {
+        Request.get(Config.DATASTORAGE_URI + "stations/" + req.params.ipAdress, (error, response, body) => {
             if (error) {
                 return res.status(response.statusCode).json({error: error.array()});
             }
-            return res.json(JSON.parse(body));
+            //return res.json(JSON.parse(body));
+            var response = JSON.parse(body);
+            var id = response.id;
+            if (id)
+                Request.delete(Config.DATASTORAGE_URI + "stations/" + id, (error, response, body) => {
+                    if (error) {
+                        return res.status(response.statusCode).json({error: error.array()});
+                    }
+                    return res.json(JSON.parse(body));
+                });
         });
+        //puis détruit la station
+
     }
 };
 
