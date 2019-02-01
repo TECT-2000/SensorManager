@@ -19,7 +19,7 @@ router.post("/sensors/:stationId",validator.validate('createSensor'),sensorsCont
 router.get("/sensors",sensorsController.list);
 router.put("/sensors/:sensorId",validator.validate('retrieveSensor'), sensorsController.update);
 router.get("/sensors/retrieve/:sensorId",validator.validate('retrieveSensor'),sensorsController.retrieve);
-router.put("/sensors/changeState/:sensorId",validator.validate('changeSensorByState'),sensorsController.modifySensorByState);
+router.put("/sensors/changeState/:sensorId",validator.validate('listSensorByState'),sensorsController.modifySensorByState);
 router.put("/sensors/changePort/:sensorId",validator.validate('changeSensorByPort'),sensorsController.modifySensorByPort);
 router.get('/sensors/:state',validator.validate('listSensorByState'), sensorsController.listSensorByState);
 

@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/sentos/NetBeansProjects/SensorManager/config/configs.js</file>
-            <file>file:/home/sentos/NetBeansProjects/SensorManager/app.js</file>
-            <file>file:/home/sentos/NetBeansProjects/SensorManager/bin/www</file>
+            <file>file:/home/sentos/NetBeansProjects/SensorManager/controllers/sensors.js</file>
+            <file>file:/home/sentos/NetBeansProjects/SensorManager/controllers/validator.js</file>
+            <file>file:/home/sentos/NetBeansProjects/SensorManager/controllers/stations.js</file>
+            <file>file:/home/sentos/NetBeansProjects/SensorManager/routes/index.js</file>
         </group>
     </open-files>
 </project-private>

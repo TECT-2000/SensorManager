@@ -14,16 +14,22 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
+        
+        var type=req.body.type;
+        var port =parseInt(req.body.port);
+        var id=parseInt(req.params.stationId);
         Request.post({
             "url": Config.DATA_ACQUISITION_URI + "config",
             "json": {
-                id : req.params.stationId,
+                id : id,
                 addSensor: [
                     {
-                        type: req.body.type,
-                        port: req.body.port
-                    }
-                ]
+                        type: type,
+                        port: port
+                    },
+                   
+                ],
+                freq:1000
             }
         }, (e, r, b) => {
             if (b === '0') {
@@ -36,7 +42,7 @@ module.exports = {
                     "name": "Sensor",
                     "state": req.body.state,
                     'port': req.body.port,
-                    "type": [req.body.type],
+                    "type": req.body.type,
                     "StationID": req.params.stationId
                 })
             }, (error, response, body) => {
@@ -161,7 +167,7 @@ module.exports = {
                     "url": Config.DATA_ACQUISITION_URI + "config",
                     "json": {
                         id : bod.stationID,
-                        enableSensor: [req.body.type]
+                        disableSensor: [req.body.type]
                     }
                 }, (e, r, b) => {
                     if (b === '0') {

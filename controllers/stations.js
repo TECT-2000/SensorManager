@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 var Request = require('request');
+var axios = require('axios');
 const {validationResult} = require('express-validator/check');
 const Config = require('../config/configs');
 
@@ -46,18 +47,21 @@ module.exports = {
                     });
                 }
                 let final = JSON.parse(b);
-                Request.put({
-                    "headers": {"content-type": "application/json"},
-                    "url": Config.DATASTORAGE_URI + "stations/" + bod.id,
-                    "body": JSON.stringify({
-                        /*"name": "Station",
-                         "frequency": req.body.frequency,
-                         'ipAdress': req.body.ipAdress,*/
-                        "longitude": final.longitude,
-                        "latitude": final.latitude
-                    })
-                });
-                return res.send(JSON.parse(b));
+                /*Request.put({
+                 "headers": {"content-type": "application/json"},
+                 "url": Config.DATASTORAGE_URI + "stations/" + bod.id,
+                 "body": JSON.stringify({
+                 /*"name": "Station",
+                 "frequency": req.body.frequency,
+                 'ipAdress': req.body.ipAdress,
+                 "longitude": final.longitude,
+                 "latitude": final.latitude
+                 })
+                 });*/
+                if (response.statusCode == 200)
+                    return res.send({"status": true});
+                else
+                    return res.send({"status": false});
             });
         });
     },
@@ -67,7 +71,12 @@ module.exports = {
             if (error) {
                 return res.send("It seems there is an error on the server");
             }
-            return res.json(JSON.parse(body));
+            var reponse = JSON.parse(body);
+            var statusCode = response.statusCode;
+            if (statusCode == 200)
+                return res.json({"status": true, "datas": reponse});
+            else
+                return res.json({"status": false, "datas": [], "error": error});
         });
 
     },
@@ -85,28 +94,31 @@ module.exports = {
             //return res.json(JSON.parse(body));
             var response = JSON.parse(body);
             var id = response.id;
-
+            console.log("id : " + id);
+            console.log(req.body);
             //puis stocke la reponse
-            if (id) {
-                Request({
-                    'method': "PUT",
-                    "content-type": "application/json",
-                    "url": Config.DATASTORAGE_URI + "stations/" + id,
-                    "body": JSON.stringify({
-                        "name": "Station",
-                        "frequency": req.body.frequency || '',
-                        'ipAdress': req.body.ipAdress || '',
-                        "longitude": req.body.longitude || '',
-                        "latitude": req.body.latitude || ''
-                    })
-                }, (error, response, body) => {
-                    if (error) {
-                        return res.status(response.statusCode).json({error: error.array()});
-                    }
-                    return res.json(JSON.parse(body));
-                });
+            axios.put(
+                    //'method': "PUT",
+                    //"content-type": "application/json",
+                    Config.DATASTORAGE_URI + "stations/" + id,
+                    {
+                        //"name": "Station",
+                        //"frequency": req.body.frequency || '',
+                        //'ipAdress': req.body.ipAdress || '',
+                        "longitude": req.body.longitude,
+                        "latitude": req.body.latitude
+                    }).then((reponse) => {
+                console.log(reponse.data);
+                return res.json(reponse.data);
+            })
+            /*}, (error, response, body) => {
+             if (error) {
+             return res.status(response.statusCode).json({error: error.array()});
+             }
+             return res.json(JSON.parse(body));
+             });
+             */
 
-            }
         });
     },
     retrieve(req, res) {
@@ -136,12 +148,14 @@ module.exports = {
             //return res.json(JSON.parse(body));
             var response = JSON.parse(body);
             var id = response.id;
+            console.log(id)
             if (id)
                 Request.delete(Config.DATASTORAGE_URI + "stations/" + id, (error, response, body) => {
                     if (error) {
                         return res.status(response.statusCode).json({error: error.array()});
                     }
-                    return res.json(JSON.parse(body));
+
+                    return res.json({"status": true, "datas": [JSON.parse(body)]});
                 });
         });
         //puis détruit la station
