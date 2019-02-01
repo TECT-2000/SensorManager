@@ -140,6 +140,10 @@ module.exports = {
             console.log(errors);
             return res.status(422).json({errors: errors.array()});
         }
+        let result = {
+            status: false,
+            data: {}
+        }
         //envoi d'abord à DATA ACQUISITION
         Request.get(Config.DATASTORAGE_URI + "stations/" + req.params.ipAdress, (error, response, body) => {
             if (error) {
@@ -149,17 +153,19 @@ module.exports = {
             var response = JSON.parse(body);
             var id = response.id;
             console.log(id)
-            if (id)
+            if (id) {
                 Request.delete(Config.DATASTORAGE_URI + "stations/" + id, (error, response, body) => {
                     if (error) {
-                        return res.status(response.statusCode).json({error: error.array()});
+                        return res.send(result);
                     }
-
-                    return res.json({"status": true, "datas": [JSON.parse(body)]});
+                    result.status = true;
+                    return res.send(result);
                 });
+            }
+            else{
+                return res.send(result);
+            }
         });
-        //puis détruit la station
-
     }
 };
 

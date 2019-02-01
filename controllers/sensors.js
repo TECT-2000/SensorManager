@@ -18,6 +18,10 @@ module.exports = {
         var type=req.body.type;
         var port =parseInt(req.body.port);
         var id=parseInt(req.params.stationId);
+        let result = {
+            status: false,
+            data: {}
+        }
         Request.post({
             "url": Config.DATA_ACQUISITION_URI + "config",
             "json": {
@@ -33,7 +37,7 @@ module.exports = {
             }
         }, (e, r, b) => {
             if (b === '0') {
-                return res.send("An error occured during the creation of the sensor");
+                return res.send(result);
             }
             Request.post({
                 "headers": {"content-type": "application/json"},
@@ -47,9 +51,11 @@ module.exports = {
                 })
             }, (error, response, body) => {
                 if (error) {
-                    return res.status(response.statusCode).json({error: error.array()});
+                    return res.send(result);
                 }
-                return res.json(JSON.parse(body));
+                result.status=true;
+                result.data=JSON.parse(body)
+                return res.json(result);
             });
         });
     },
